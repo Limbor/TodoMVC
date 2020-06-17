@@ -1,0 +1,134 @@
+body{
+    background: #daf0e5;
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica", "Arial", sans-serif;
+}
+button:hover{
+    cursor: pointer;
+}
+h2{
+    text-align: center;
+    font-weight: 100;
+    margin: 15px 0;
+    font-size: 24pt;
+    letter-spacing: 5px;
+    color: #376d4e;
+}
+.item{
+    background: white;
+    color: black;
+    bottom: 10px;
+    width: 94%;
+    margin-top: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 60px;
+    border-radius: 10px;
+}
+.item input{
+    display:none;
+}
+.item label{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #4a4a4a;
+    position: relative;
+    left: 15px;
+    top: 18px;
+}
+.item label::after {
+    transition: opacity .5s ease;
+    cursor: pointer;
+    position: absolute;
+    content: '';
+    opacity: 0;
+}
+.item input:checked+label::after{
+    border: 2px solid #346f4f;
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+    width: 10px;
+    height: 5px;
+    top: 63%;
+    margin-top: -8px;
+    left: 67%;
+    margin-left:-10px;
+    opacity: 1.0;
+}
+.item img{
+    width: 24px;
+    height: 24px;
+    float: right;
+    margin-right: 20px;
+    margin-top: 18px;
+}
+.item .content{
+    margin-left: 30px;
+    margin-top: 5px;
+    font-size: 14pt;
+    font-weight: 100;
+    display: inline-block;
+}
+.completed{
+    text-decoration: line-through;
+    color: #aaa;
+}
+.footer{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: #daf0e5;
+}
+.inputBox{
+    text-align: left;
+    position: absolute;
+    background: #cfe7db;
+    bottom: 10px;
+    left: 3%;
+    width: 94%;
+    height: 50px;
+    border-radius: 10px;
+    font-size: 30pt;
+    font-weight: 100;
+    color: #376d4e;
+}
+.inputBox label{
+    position: absolute;
+    left: 15px;
+    bottom: 5px;
+}
+.inputBox input{
+    position: absolute;
+    right: 15px;
+    bottom: 5px;
+    background: #cfe7db;
+    outline: 0;
+    color: #376d4e;
+    font-size: 18pt;
+    border: 0;
+    padding: 0;
+    height: 70%;
+    width: 80%;
+}
+.inputBox input::placeholder{
+    color: rgba(55, 109, 78, 0.4);
+    font-style: italic;
+}
+.inputBox input:focus{
+    border-color: #50986e;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(56, 114, 66, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(56, 114, 68, 0.6)
+}
+#itemCount{
+    text-align: center;
+    padding: 5px;
+    font-size: 16pt;
+    font-weight: 100;
+}

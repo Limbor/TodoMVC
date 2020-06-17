@@ -1,2 +1,2 @@
 # TodoMVC
-2020 Tongji SSE Web Programming final project
+2020 Tongji University SSE Web Programming final project
