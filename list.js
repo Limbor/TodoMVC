@@ -8,6 +8,8 @@ function $All(selector){
 
 const CL_COMPLETED = 'completed';
 const CL_CONTENT = 'content';
+const CL_TIME = 'time';
+const CL_WITHOUT_TIME = 'withoutTime';
 
 function updateAmount(itemCount) {
     $('itemCount').innerText = itemCount + " items left";
@@ -15,6 +17,11 @@ function updateAmount(itemCount) {
 
 function flushStorage() {
     localStorage.setItem('data', JSON.stringify(window.model.data));
+}
+
+function updateCheckAllSate() {
+    if(window.model.data.checkAll) $All('#complete img')[0].src = 'img/check-all.png';
+    else $All('#complete img')[0].src = 'img/uncheck-all.png';
 }
 
 function updateItems() {
@@ -41,6 +48,17 @@ function updateItems() {
         content.classList.add(CL_CONTENT);
         content.innerText = items[i].msg;
         item.appendChild(content);
+
+        if(items[i].time === 0) content.classList.add(CL_WITHOUT_TIME);
+        else{
+            let time = document.createElement("div");
+            time.classList.add(CL_TIME);
+            time.innerHTML = items[i].time;
+            let calendar = document.createElement("img");
+            calendar.src = 'img/calendar.png';
+            time.insertBefore(calendar, time.firstChild);
+            item.appendChild(time);
+        }
 
         let favorite = document.createElement("img");
         if(!items[i].favorites) favorite.src = "img/star.png";
@@ -76,7 +94,15 @@ function updateItems() {
         }
         checkbox.addEventListener("change", () => {
             items[i].completed = checkbox.checked;
-            if(items[i].completed) items.push(items.splice(i, 1)[0]);
+            if(items[i].completed) {
+                items[i].favorites = false;
+                for(let j = i + 1; j < items.length; j++){
+                    if(!items[j].completed){
+                        items[j] = items.splice(j - 1, 1, items[j])[0];
+                    }
+                    else break;
+                }
+            }
             else{
                 for(let j = i - 1; j >= 0; j--){
                     if(items[j].completed){
@@ -88,7 +114,9 @@ function updateItems() {
             updateItems();
         });
     }
+    window.model.data.checkAll = (count === 0 && items.length !== 0);
     updateAmount(count);
+    updateCheckAllSate();
 }
 
 function addItem() {
@@ -119,7 +147,8 @@ function addItem() {
 window.model = {
     data: {
         content: '',
-        items: []
+        items: [],
+        checkAll: false
     },
     TOKEN: "TodoMVC"
 }
@@ -142,4 +171,30 @@ window.onload = function () {
         }
         flushStorage();
     };
+    $('complete').ontouchend = function () {
+        if(window.model.data.checkAll){
+            window.model.data.checkAll = false;
+            window.model.data.items.forEach((item) => {
+                item.completed = false;
+            });
+        }
+        else{
+            window.model.data.checkAll = true;
+            window.model.data.items.forEach((item) => {
+                item.completed = true;
+                item.favorites = false;
+            });
+        }
+        updateItems();
+    }
+    $('clear').ontouchend = function () {
+        let items = window.model.data.items;
+        for(let i = 0; i < items.length; i++){
+            if(items[i].completed) {
+                items.splice(i, 1);
+                i--;
+            }
+        }
+        updateItems();
+    }
 }
