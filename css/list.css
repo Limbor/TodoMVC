@@ -4,6 +4,7 @@ body{
     padding: 0;
     font-family: "Helvetica", "Arial", sans-serif;
 }
+
 h2{
     text-align: center;
     font-weight: 100;
@@ -12,6 +13,7 @@ h2{
     letter-spacing: 5px;
     color: #376d4e;
 }
+
 .header{
     background: #daf0e5;
     top: 0;
@@ -21,28 +23,34 @@ h2{
     position: fixed;
     z-index: 10;
 }
+
 .header img{
     width: 30px;
     height: 30px;
 }
+
 #complete{
     position: absolute;
     left: 20px;
     top: 17px;
 }
+
 #clear{
     position: absolute;
     right: 20px;
     top: 17px;
 }
+
 .body{
     margin: 70px 0;
 }
+
 .item .withoutTime{
     position: relative;
     top: 12px;
 }
-.item .time{
+
+.time{
     display: inline-block;
     position: absolute;
     top: 35px;
@@ -51,16 +59,27 @@ h2{
     color: #aaaaaa;
     font-weight: 200;
 }
+
+.today{
+    color: #546dca;
+}
+
+.overdue{
+    color: #ca656b;
+}
+
 .time img{
     margin: 0 2px 0 0;
     float: none;
     width: 12px;
     height: 12px;
 }
+
 .completed{
     text-decoration: line-through;
     color: #aaa;
 }
+
 .footer{
     position: fixed;
     bottom: 0;
@@ -69,6 +88,7 @@ h2{
     height: 70px;
     background: #daf0e5;
 }
+
 .inputBox{
     text-align: left;
     position: absolute;
@@ -82,11 +102,13 @@ h2{
     font-weight: 100;
     color: #376d4e;
 }
+
 .inputBox label{
     position: absolute;
     left: 15px;
     bottom: 5px;
 }
+
 .inputBox input{
     position: absolute;
     right: 15px;
@@ -100,15 +122,18 @@ h2{
     height: 70%;
     width: 80%;
 }
+
 .inputBox input::placeholder{
     color: rgba(55, 109, 78, 0.4);
     font-style: italic;
 }
+
 .inputBox input:focus{
     border-color: #50986e;
     outline: 0;
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(56, 114, 68, 0.6)
 }
+
 #itemCount{
     text-align: center;
     padding: 5px;

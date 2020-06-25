@@ -10,6 +10,43 @@ const CL_COMPLETED = 'completed';
 const CL_CONTENT = 'content';
 const CL_TIME = 'time';
 const CL_WITHOUT_TIME = 'withoutTime';
+const CL_TODAY = 'today';
+const CL_OVERDUE = 'overdue';
+
+function getTimeString() {
+    let date = new Date();
+    let nowMonth = date.getMonth() + 1;
+    let strDate = date.getDate();
+    if (nowMonth >= 1 && nowMonth <= 9) {
+        nowMonth = "0" + nowMonth;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    return [date.getFullYear(), nowMonth, strDate].join('-');
+}
+
+function setTime(time, element) {
+    let now = new Date(getTimeString());
+    let due = new Date(time);
+    element.innerText = due.toDateString();
+
+    if(due < now) {
+        element.classList.add(CL_OVERDUE);
+        if(due.getDate() === now.getDate() - 1 && due.getMonth() === now.getMonth()
+            && due.getFullYear() === now.getFullYear()){
+            element.innerText = 'Yesterday';
+        }
+    }
+    else if(due.getTime() === now.getTime()){
+        element.classList.add(CL_TODAY);
+        element.innerText = 'Today';
+    }
+    else if(due.getDate() === now.getDate() + 1 && due.getMonth() === now.getMonth()
+        && due.getFullYear() === now.getFullYear()){
+        element.innerText = 'Tomorrow';
+    }
+}
 
 function updateAmount(itemCount) {
     $('itemCount').innerText = itemCount + " items left";
@@ -51,11 +88,12 @@ function updateItems() {
         content.innerText = items[i].msg;
         item.appendChild(content);
 
-        if(items[i].time === 0) content.classList.add(CL_WITHOUT_TIME);
+        if(items[i].time === '') content.classList.add(CL_WITHOUT_TIME);
         else{
             let time = document.createElement("div");
             time.classList.add(CL_TIME);
             time.innerHTML = items[i].time;
+            setTime(items[i].time, time);
             let calendar = document.createElement("img");
             calendar.src = 'img/calendar.png';
             time.insertBefore(calendar, time.firstChild);
@@ -68,17 +106,7 @@ function updateItems() {
         item.appendChild(favorite)
         favorite.addEventListener("touchend", (e) => {
             e.stopPropagation();
-            if(items[i].completed) return;
-            items[i].favorites = !items[i].favorites;
-            if(i !== 0 && items[i].favorites) items.unshift(items.splice(i, 1)[0]);
-            else if(!items[i].favorites){
-                for(let j = i + 1; j < items.length; j++){
-                    if(items[j].favorites) {
-                        items[j] = items.splice(j - 1, 1, items[j])[0];
-                    }
-                    else break;
-                }
-            }
+            favoriteItem(i);
             updateItems();
         })
 
@@ -87,7 +115,7 @@ function updateItems() {
         item.appendChild(trash);
         trash.addEventListener('touchend', (e) => {
             e.stopPropagation();
-           items.splice(i, 1);
+           delItem(i);
            updateItems();
         });
 
@@ -97,43 +125,13 @@ function updateItems() {
             content.classList.add(CL_COMPLETED);
         }
         checkbox.addEventListener("change", () => {
-            items[i].completed = checkbox.checked;
-            if(items[i].completed) {
-                items[i].favorites = false;
-                for(let j = i + 1; j < items.length; j++){
-                    if(!items[j].completed){
-                        items[j] = items.splice(j - 1, 1, items[j])[0];
-                    }
-                    else break;
-                }
-            }
-            else{
-                for(let j = i - 1; j >= 0; j--){
-                    if(items[j].completed){
-                        items[j] = items.splice(j + 1, 1, items[j])[0];
-                    }
-                    else break;
-                }
-            }
+            checkItem(i, checkbox.checked)
             updateItems();
         });
     }
     window.model.data.checkAll = (count === 0 && items.length !== 0);
     updateAmount(count);
     updateCheckAllSate();
-}
-
-function getTimeString() {
-    let date = new Date();
-    let nowMonth = date.getMonth() + 1;
-    let strDate = date.getDate();
-    if (nowMonth >= 1 && nowMonth <= 9) {
-        nowMonth = "0" + nowMonth;
-    }
-    if (strDate >= 0 && strDate <= 9) {
-        strDate = "0" + strDate;
-    }
-    return [date.getFullYear(), nowMonth, strDate].join('-');
 }
 
 function addItem() {
@@ -152,7 +150,7 @@ function addItem() {
     let item = {
         msg: message,
         completed: false,
-        time: 0,
+        time: '',
         favorites: false,
         createDate: nowDate
     }
@@ -163,19 +161,8 @@ function addItem() {
     updateItems();
 }
 
-window.model = {
-    data: {
-        content: '',
-        items: [],
-        checkAll: false
-    },
-    TOKEN: "TodoMVC"
-}
-
 window.onload = function () {
-    let data = localStorage.getItem('data');
-    if(data) {
-        window.model.data = JSON.parse(data);
+    if(init()) {
         $('addInput').value = window.model.data.content;
         updateItems();
     }

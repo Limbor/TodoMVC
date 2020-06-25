@@ -26,10 +26,9 @@ function getParameter(key)
 }
 
 window.onload = function () {
-    let data = localStorage.getItem('data');
-    if(data) window.model.data = JSON.parse(data);
-    let index = getParameter('index');
-    if(index === '') location.href = './list.html'
+    if(!init()) location.href = '../list.html'
+    let index = Number(getParameter('index'));
+    if(index === '') location.href = '../list.html'
     let item = window.model.data.items[index];
 
     let editInput = $('editInput');
@@ -48,10 +47,28 @@ window.onload = function () {
     let checkbox = $('check');
     checkbox.checked = item.completed;
     checkbox.addEventListener("change", () => {
-        item.completed = checkbox.checked;
+        checkItem(index);
         flushStorage();
     });
 
     let favorite = $('favorite');
     if(item.favorites) favorite.src = 'img/star-fill.png';
+    favorite.addEventListener("touchend", () => {
+        favoriteItem(index);
+        flushStorage();
+    });
+
+    $('createTime').innerText = 'Created On' + item.createDate;
+    $('del').ontouchend = function () {
+        delItem(index);
+        flushStorage();
+    };
+
+    let date = $('timeEdit');
+    if(item.time) date.value = item.time;
+    date.addEventListener('change', () => {
+        item.time = date.value;
+        flushStorage();
+        date.blur();
+    });
 }
