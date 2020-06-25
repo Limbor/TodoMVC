@@ -15,10 +15,6 @@ function updateAmount(itemCount) {
     $('itemCount').innerText = itemCount + " items left";
 }
 
-function flushStorage() {
-    localStorage.setItem('data', JSON.stringify(window.model.data));
-}
-
 function updateCheckAllSate() {
     if(window.model.data.checkAll) $All('#complete img')[0].src = 'img/check-all.png';
     else $All('#complete img')[0].src = 'img/uncheck-all.png';
@@ -34,6 +30,9 @@ function updateItems() {
         let item = document.createElement("div");
         item.classList.add("item");
         list.appendChild(item);
+        item.addEventListener('touchend', () => {
+            window.location.href = './edit?index=' + i.toString();
+        });
 
         let checkbox = document.createElement("input");
         checkbox.type = 'checkbox';
@@ -43,6 +42,9 @@ function updateItems() {
         let label = document.createElement("label");
         label.htmlFor = checkbox.id;
         item.appendChild(label);
+        label.addEventListener('touchend', (e) => {
+            e.stopPropagation();
+        });
 
         let content = document.createElement("div");
         content.classList.add(CL_CONTENT);
@@ -64,7 +66,8 @@ function updateItems() {
         if(!items[i].favorites) favorite.src = "img/star.png";
         else favorite.src = "img/star-fill.png";
         item.appendChild(favorite)
-        favorite.addEventListener("touchend", () => {
+        favorite.addEventListener("touchend", (e) => {
+            e.stopPropagation();
             if(items[i].completed) return;
             items[i].favorites = !items[i].favorites;
             if(i !== 0 && items[i].favorites) items.unshift(items.splice(i, 1)[0]);
@@ -82,7 +85,8 @@ function updateItems() {
         let trash = document.createElement("img");
         trash.src = 'img/trash.png';
         item.appendChild(trash);
-        trash.addEventListener('touchend', () => {
+        trash.addEventListener('touchend', (e) => {
+            e.stopPropagation();
            items.splice(i, 1);
            updateItems();
         });
@@ -119,6 +123,19 @@ function updateItems() {
     updateCheckAllSate();
 }
 
+function getTimeString() {
+    let date = new Date();
+    let nowMonth = date.getMonth() + 1;
+    let strDate = date.getDate();
+    if (nowMonth >= 1 && nowMonth <= 9) {
+        nowMonth = "0" + nowMonth;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    return [date.getFullYear(), nowMonth, strDate].join('-');
+}
+
 function addItem() {
     let input = $("addInput");
     let message = input.value;
@@ -126,6 +143,7 @@ function addItem() {
         alert("输入内容不能为空");
         return;
     }
+    let nowDate = getTimeString();
     let items = window.model.data.items;
     let i;
     for(i = 0; i < items.length; i++){
@@ -135,7 +153,8 @@ function addItem() {
         msg: message,
         completed: false,
         time: 0,
-        favorites: false
+        favorites: false,
+        createDate: nowDate
     }
     if(i === items.length) items.push(item);
     else if(i === 0) items.unshift(item);
