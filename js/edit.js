@@ -55,6 +55,8 @@ window.onload = function () {
     if(item.favorites) favorite.src = 'img/star-fill.png';
     favorite.addEventListener("touchend", () => {
         favoriteItem(index);
+        if(item.favorites) favorite.src = 'img/star-fill.png';
+        else favorite.src = 'img/star.png';
         flushStorage();
     });
 
